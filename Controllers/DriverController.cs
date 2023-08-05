@@ -56,10 +56,33 @@ namespace DemoAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
             }catch(Exception ex)
             {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch]
+        [Route("UpdateDriver")]
+        public IActionResult UpdateDriver(Driver driver)
+        {
+            try
+            {
+                Driver obj = _drivers.FirstOrDefault((u=>u.Id == driver.Id));
+                if (obj != null)
+                {
+                    // first remove the old obj and add the new one
+                    _drivers.Remove(obj);
+                    _drivers.Add(driver);
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }catch (Exception ex) { 
                 return BadRequest(ex.Message);
             }
         }
