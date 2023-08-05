@@ -8,7 +8,7 @@ namespace DemoAPI.Controllers
     public class DriverController : ControllerBase
     {
         // let's make an in-memory database
-        private readonly List<Driver> _drivers = new List<Driver>() { 
+        private static List<Driver> _drivers = new List<Driver>() { 
             new Driver {Id=0, Name="John", DriverNumber=131, Team="Red Team"},
             new Driver {Id=1, Name="James", DriverNumber=132, Team="Blue Team"},
             new Driver {Id=2, Name="Murdock", DriverNumber=133, Team="Dev Team"}
@@ -32,6 +32,14 @@ namespace DemoAPI.Controllers
         public IActionResult Get(int id)
         {
             return Ok(_drivers.FirstOrDefault(u=> u.Id == id));
+        }
+
+        [HttpPost]
+        [Route("AddDriver")]
+        public IActionResult AddDriver(Driver driver)
+        {
+            _drivers.Add(driver);
+            return Ok();
         }
     }
 }
