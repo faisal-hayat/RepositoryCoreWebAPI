@@ -41,5 +41,27 @@ namespace DemoAPI.Controllers
             _drivers.Add(driver);
             return Ok();
         }
+
+        [HttpDelete]
+        [Route("DeleteDriver")]
+        public IActionResult DeleteDriver(int Id)
+        {
+            try
+            {
+                Driver obj = _drivers.FirstOrDefault(u => u.Id == Id);
+                if (obj != null)
+                {
+                    _drivers.Remove(obj);
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
