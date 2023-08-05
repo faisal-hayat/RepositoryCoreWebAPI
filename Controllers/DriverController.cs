@@ -5,7 +5,7 @@ namespace DemoAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class DriverController : Controller
+    public class DriverController : ControllerBase
     {
         // let's make an in-memory database
         private readonly List<Driver> _drivers = new List<Driver>() { 
@@ -14,9 +14,24 @@ namespace DemoAPI.Controllers
             new Driver {Id=2, Name="Murdock", DriverNumber=133, Team="Dev Team"}
         };
 
+        private readonly ILogger<DriverController> _logger;
+
+        public DriverController(ILogger<DriverController> logger)
+        {
+            _logger = logger;
+        }
+
+        [HttpGet]
         public IActionResult Get()
         {
             return Ok(_drivers);
+        }
+
+        [HttpGet]
+        [Route("GetbyId")]
+        public IActionResult Get(int id)
+        {
+            return Ok(_drivers.FirstOrDefault(u=> u.Id == id));
         }
     }
 }
