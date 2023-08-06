@@ -5,10 +5,10 @@ namespace DemoAPI.Services.Interfaces
 {
     public interface IOrderService
     {
-        public Task<IActionResult> Get();
-        public Task<IActionResult> Get(int id);
-        public Task<IActionResult> AddDriver(Driver driver);
-        public Task<IActionResult> DeleteDriver(int Id);
-        public Task<IActionResult> UpdateDriver(Driver driver);
+        public Task<List<Driver>> Get();
+        public Task<Driver> Get(int id);
+        public Task<Object> AddDriver(Driver driver);
+        public Task<Object> DeleteDriver(int Id);
+        public Task<Object> UpdateDriver(Driver driver);
     }
 }
