@@ -1,6 +1,5 @@
 ﻿using DemoAPI.Data;
 using DemoAPI.Models;
-using DemoAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +9,9 @@ namespace DemoAPI.Controllers
     [Route("[controller]")]
     public class DriverController : ControllerBase
     {
+
+        // get the database connection
+        public ApplicationDbContext _dbContext;
         // let's make an in-memory database
         private static List<Driver> _drivers = new List<Driver>() { 
             new Driver {Id=0, Name="John", DriverNumber=131, Team="Red Team"},
@@ -18,111 +20,112 @@ namespace DemoAPI.Controllers
         };
 
         private readonly ILogger<DriverController> _logger;
-        private OrderService _orderService;
+        
 
-        public DriverController(ILogger<DriverController> logger, OrderService orderService)
+        public DriverController(ILogger<DriverController> logger, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
-            _orderService = orderService;
+            _dbContext = applicationDbContext;
+            
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(_orderService.Get());
+            return Ok(await _dbContext.Drivers.ToListAsync());
         }
 
-        //[HttpGet]
-        //[Route("GetbyId")]
-        //public async Task<IActionResult> Get(int id)
-        //{
-        //    try
-        //    {
-        //        Driver driver = await _dbContext.Drivers.FirstOrDefaultAsync(u => u.Id == id);
-        //        if (driver != null)
-        //        {
-        //            return Ok(driver);
-        //        }
-        //        else
-        //        {
-        //            return NotFound();
-        //        }
-        //    }catch(Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpGet]
+        [Route("GetbyId")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                Driver driver = await _dbContext.Drivers.FirstOrDefaultAsync(u => u.Id == id);
+                if (driver != null)
+                {
+                    return Ok(driver);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-        //[HttpPost]
-        //[Route("AddDriver")]
-        //public async Task<IActionResult> AddDriver(Driver driver)
-        //{
-        //    try
-        //    {
-        //        int id = driver.Id;
-        //        // Let's find the object if it exits already
-        //        Driver obj = await _dbContext.Drivers.FirstOrDefaultAsync(u => u.Id == id);
-        //        if (obj==null)
-        //        {
-        //            _dbContext.Drivers.Add(driver);
-        //            await _dbContext.SaveChangesAsync();
-        //            return Ok();
-        //        }
-        //        else
-        //        {
-        //           return BadRequest("Item already exists.");
-        //        }
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpPost]
+        [Route("AddDriver")]
+        public async Task<IActionResult> AddDriver(Driver driver)
+        {
+            try
+            {
+                int id = driver.Id;
+                // Let's find the object if it exits already
+                Driver obj = await _dbContext.Drivers.FirstOrDefaultAsync(u => u.Id == id);
+                if (obj==null)
+                {
+                    _dbContext.Drivers.Add(driver);
+                    await _dbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                else
+                {
+                   return BadRequest("Item already exists.");
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-        //[HttpDelete]
-        //[Route("DeleteDriver")]
-        //public async Task<IActionResult> DeleteDriver(int Id)
-        //{
-        //    try
-        //    {
-        //        Driver obj = await _dbContext.Drivers.FirstOrDefaultAsync(u => u.Id == Id);
-        //        if (obj != null)
-        //        {
-        //            _dbContext.Drivers.Remove(obj);
-        //            await _dbContext.SaveChangesAsync();
-        //            return Ok();
-        //        }
-        //        else
-        //        {
-        //            return NotFound();
-        //        }
-        //    }catch(Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpDelete]
+        [Route("DeleteDriver")]
+        public async Task<IActionResult> DeleteDriver(int Id)
+        {
+            try
+            {
+                Driver obj = await _dbContext.Drivers.FirstOrDefaultAsync(u => u.Id == Id);
+                if (obj != null)
+                {
+                    _dbContext.Drivers.Remove(obj);
+                    await _dbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-        //[HttpPatch]
-        //[Route("UpdateDriver")]
-        //public async Task<IActionResult> UpdateDriver(Driver driver)
-        //{
-        //    try
-        //    {
-        //        Driver obj = await _dbContext.Drivers.FirstOrDefaultAsync((u=>u.Id == driver.Id));
-        //        if (obj != null)
-        //        {
-        //            // first remove the old obj and add the new one
-        //            _dbContext.Drivers.Update(driver);
-        //            await _dbContext.SaveChangesAsync();
-        //            return Ok();
-        //        }
-        //        else
-        //        {
-        //            return NotFound();
-        //        }
-        //    }catch (Exception ex) { 
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpPatch]
+        [Route("UpdateDriver")]
+        public async Task<IActionResult> UpdateDriver(Driver driver)
+        {
+            try
+            {
+                Driver obj = await _dbContext.Drivers.FirstOrDefaultAsync((u=>u.Id == driver.Id));
+                if (obj != null)
+                {
+                    // first remove the old obj and add the new one
+                    _dbContext.Drivers.Update(driver);
+                    await _dbContext.SaveChangesAsync();
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }catch (Exception ex) { 
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

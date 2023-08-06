@@ -1,4 +1,5 @@
 using DemoAPI.Services;
+using DemoAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DemoAPI.Data.ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-builder.Services.AddScoped<DemoAPI.Services.Interfaces.IOrderService, OrderService>();
+
+// Custom based services
+// builder.Services.AddScoped<IGenericRepository, IDriverRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
